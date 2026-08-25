@@ -146,7 +146,8 @@
                                 'partially_paid' => 'bg-amber-50 text-amber-700',
                                 'unpaid' => 'bg-red-50 text-red-700',
                             ];
-                            $remaining = max(0, $order->invoice->net_amount - $order->invoice->paid_amount);
+                            $remaining = $order->invoice->net_amount - $order->invoice->paid_amount;
+                            $isOverpaid = $remaining < 0;
                         @endphp
 
                         <span class="inline-block {{ $paymentStyles[$order->invoice->payment_status] ?? 'bg-slate-100 text-slate-600' }} text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full mb-4">
@@ -171,8 +172,10 @@
                                 <span class="font-medium text-emerald-600">{{ number_format($order->invoice->paid_amount, 2) }} EGP</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-slate-500">Remaining</span>
-                                <span class="font-semibold text-red-600">{{ number_format($remaining, 2) }} EGP</span>
+                                <span class="text-slate-500">{{ $isOverpaid ? 'Overpaid' : 'Remaining' }}</span>
+                                <span class="font-semibold {{ $isOverpaid ? 'text-blue-600' : 'text-red-600' }}">
+                                    {{ number_format(abs($remaining), 2) }} EGP
+                            </span>
                             </div>
                         </div>
 
