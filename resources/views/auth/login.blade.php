@@ -130,6 +130,7 @@
         </div>
 
         <div class="grid grid-cols-3 gap-2">
+            <!-- Admin -->
             <button
                 type="button"
                 onclick="fillCredentials('admin@minilis.com', 'password')"
@@ -139,22 +140,30 @@
                 <span class="block text-[9px] text-slate-400 truncate">admin@minilis.com</span>
             </button>
 
+            <!-- Receptionist -->
+            @php
+                $receptionistEmail = $receptionist?->email ?? 'receptionist@minilis.com';
+            @endphp
             <button
                 type="button"
-                onclick="fillCredentials('receptionist@minilis.com', 'password')"
+                onclick="fillCredentials('{{ $receptionistEmail }}', 'password')"
                 class="px-2 py-1.5 bg-white hover:bg-sky-50 hover:border-sky-300 border border-slate-200 rounded-lg text-center transition-all group cursor-pointer shadow-2xs"
             >
                 <span class="block text-[11px] font-semibold text-slate-800 group-hover:text-sky-700">Receptionist</span>
-                <span class="block text-[9px] text-slate-400 truncate">receptionist@minilis.com</span>
+                <span class="block text-[9px] text-slate-400 truncate" title="{{ $receptionistEmail }}">{{ $receptionistEmail }}</span>
             </button>
 
+            <!-- Technician -->
+            @php
+                $technicianEmail = $technician?->email ?? 'technician@minilis.com';
+            @endphp
             <button
                 type="button"
-                onclick="fillCredentials('technician@minilis.com', 'password')"
+                onclick="fillCredentials('{{ $technicianEmail }}', 'password')"
                 class="px-2 py-1.5 bg-white hover:bg-teal-50 hover:border-teal-300 border border-slate-200 rounded-lg text-center transition-all group cursor-pointer shadow-2xs"
             >
                 <span class="block text-[11px] font-semibold text-slate-800 group-hover:text-teal-700">Technician</span>
-                <span class="block text-[9px] text-slate-400 truncate">technician@minilis.com</span>
+                <span class="block text-[9px] text-slate-400 truncate" title="{{ $technicianEmail }}">{{ $technicianEmail }}</span>
             </button>
         </div>
     </div>

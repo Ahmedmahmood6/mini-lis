@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,10 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
 
-        return view('auth.login');
+        $receptionist = User::where('role', 'receptionist')->first();
+        $technician = User::where('role', 'technician')->first();
+
+        return view('auth.login', compact('receptionist', 'technician'));
     }
 
     /**

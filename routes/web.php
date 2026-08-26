@@ -10,6 +10,7 @@ use App\Http\Controllers\PublicAppointmentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,7 +49,7 @@ Route::middleware('auth')->group(function () {
     */
     Route::middleware('role:admin')->prefix('admin')->as('admin.')->group(function () {
         // User & Staff Management (CRUD)
-        Route::get('/users', fn () => 'Admin: Manage Users')->name('users.index');
+        Route::resource('users', UserController::class)->except(['show']);
 
         // Lab Test Catalog Management (CRUD)
         Route::resource('tests', TestController::class);
