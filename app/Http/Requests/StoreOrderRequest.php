@@ -30,7 +30,7 @@ class StoreOrderRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:1000'],
             'discount' => ['nullable', 'numeric', 'min:0'],
             'paid_amount' => ['nullable', 'numeric', 'min:0'],
-            'payment_method' => ['nullable', 'in:cash,card,online'],
+            'payment_method' => ['required', 'in:cash,card,online'],
         ];
     }
 }

@@ -99,7 +99,8 @@
                 </div>
 
                 <div class="mt-5">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Payment Method</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Payment Method <span class="text-red-500">*</span></label>
+                    @error('payment_method') <p class="text-xs text-red-600 mb-2">{{ $message }}</p> @enderror
                     <div class="flex gap-3">
                         <label class="flex-1 flex items-center justify-center gap-2 border border-slate-200 rounded-xl px-4 py-2.5 cursor-pointer hover:bg-slate-50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-300 transition-colors">
                             <input type="radio" name="payment_method" value="cash" {{ old('payment_method', 'cash') === 'cash' ? 'checked' : '' }}
