@@ -32,11 +32,8 @@
             ];
         @endphp
 
-        @foreach ($tabs as $value => $label)
-            <a
-                href="{{ route('reception.appointments.index', $value ? ['status' => $value] : []) }}"
-                class="px-4 py-2 rounded-xl text-sm font-medium transition-colors {{ (string) $status === (string) $value ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/30' : 'text-slate-600 hover:bg-slate-100' }}"
-            >
+            @foreach ($tabs as $value => $label)
+            <a href="{{ route('reception.appointments.index', $value ? ['status' => $value] : []) }}" class="px-4 py-2 rounded-xl text-sm font-medium transition-colors {{ (string) $status === (string) $value ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/30' : 'text-slate-600 hover:bg-slate-100' }}">
                 {{ $label }}
             </a>
         @endforeach
@@ -94,6 +91,19 @@
                                     Confirm
                                 </x-button>
                             </form>
+                        @endif
+
+                        @if ($appointment->status === 'confirmed')
+                            <x-button
+                                href="{{ route('reception.orders.create', ['appointment_id' => $appointment->id]) }}"
+                                variant="primary"
+                                size="sm"
+                            >
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                                Create Order
+                            </x-button>
                         @endif
 
                         @if (in_array($appointment->status, ['pending', 'confirmed']))

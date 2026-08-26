@@ -47,11 +47,15 @@ class PublicAppointmentController extends Controller
             'gender' => $validated['gender'] ?? $patient->gender,
             'age' => $validated['age'] ?? $patient->age,
             'appointment_date' => $appointmentDateTime,
-            'test_id' => $validated['test_id'] ?? null,
+            'test_id' => $validated['test_ids'][0] ?? null,
             'status' => 'pending',
             'notes' => $validated['notes'] ?? null,
             'patient_id' => $patient->id,
         ]);
+
+                if (! empty($validated['test_ids'])) {
+            $appointment->tests()->sync($validated['test_ids']);
+        }
 
         return redirect()
             ->back()

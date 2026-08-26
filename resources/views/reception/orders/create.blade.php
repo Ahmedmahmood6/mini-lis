@@ -59,8 +59,8 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 @foreach($categoryTests as $test)
                                     <label class="flex items-center gap-2.5 border border-slate-200 rounded-xl px-3.5 py-2.5 cursor-pointer hover:bg-slate-50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-300 transition-colors">
-                                        <input type="checkbox" name="test_ids[]" value="{{ $test->id }}"
-                                                {{ in_array($test->id, old('test_ids', [])) ? 'checked' : '' }}
+                                            <input type="checkbox" name="test_ids[]" value="{{ $test->id }}"
+                                                {{ in_array($test->id, old('test_ids', $selectedAppointment && $selectedAppointment->test_id ? [$selectedAppointment->test_id] : [])) ? 'checked' : '' }}
                                                 class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 test-checkbox"
                                                 data-price="{{ $test->price }}">
                                         <span class="flex-1 text-sm text-slate-700">{{ $test->name }}</span>
