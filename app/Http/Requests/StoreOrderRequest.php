@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Test;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,8 +30,31 @@ class StoreOrderRequest extends FormRequest
             'test_ids.*' => ['required', 'exists:tests,id'],
             'notes' => ['nullable', 'string', 'max:1000'],
             'discount' => ['nullable', 'numeric', 'min:0'],
-            'paid_amount' => ['nullable', 'numeric', 'min:0'],
+            'paid_amount' => ['required', 'numeric', 'min:0'],
             'payment_method' => ['required', 'in:cash,card,online'],
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $testIds = (array) $this->input('test_ids', []);
+            if (! empty($testIds)) {
+                $totalAmount = (float) Test::whereIn('id', $testIds)->sum('price');
+                $discount = (float) $this->input('discount', 0.00);
+                $netAmount = max(0.00, $totalAmount - $discount);
+                $paidAmount = (float) $this->input('paid_amount', 0.00);
+
+                if ($paidAmount < $netAmount) {
+                    $validator->errors()->add(
+                        'paid_amount',
+                        'Paid amount must equal the net total amount ('.number_format($netAmount, 2).' EGP).'
+                    );
+                }
+            }
+        });
     }
 }

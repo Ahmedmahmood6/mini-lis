@@ -53,7 +53,7 @@ class PublicAppointmentController extends Controller
             'patient_id' => $patient->id,
         ]);
 
-                if (! empty($validated['test_ids'])) {
+        if (! empty($validated['test_ids'])) {
             $appointment->tests()->sync($validated['test_ids']);
         }
 

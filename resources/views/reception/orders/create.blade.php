@@ -91,8 +91,8 @@
                     </div>
 
                     <div>
-                        <label for="paid_amount" class="block text-sm font-semibold text-slate-700 mb-1.5">Paid Amount (EGP)</label>
-                        <input type="number" step="0.01" min="0" name="paid_amount" id="paid_amount" value="{{ old('paid_amount', 0) }}"
+                        <label for="paid_amount" class="block text-sm font-semibold text-slate-700 mb-1.5">Paid Amount (EGP) <span class="text-red-500">*</span></label>
+                        <input type="number" step="0.01" min="0" name="paid_amount" id="paid_amount" value="{{ old('paid_amount') }}" required
                                 class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('paid_amount') border-red-400 @enderror">
                         @error('paid_amount') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
@@ -136,19 +136,42 @@
     </div>
 
     <script>
-        // Live-update the selected tests total whenever a checkbox is toggled
+        const discountInput = document.getElementById('discount');
+        const paidAmountInput = document.getElementById('paid_amount');
+        let userManuallyEditedPaid = false;
+
+        if (paidAmountInput) {
+            paidAmountInput.addEventListener('input', function () {
+                userManuallyEditedPaid = true;
+            });
+        }
+
         document.querySelectorAll('.test-checkbox').forEach(function (checkbox) {
-            checkbox.addEventListener('change', updateTestsTotal);
+            checkbox.addEventListener('change', updateTotals);
         });
 
-        function updateTestsTotal() {
+        if (discountInput) {
+            discountInput.addEventListener('input', updateTotals);
+        }
+
+        function updateTotals() {
             let total = 0;
             document.querySelectorAll('.test-checkbox:checked').forEach(function (checkbox) {
                 total += parseFloat(checkbox.dataset.price) || 0;
             });
             document.getElementById('tests-total').textContent = total.toFixed(2) + ' EGP';
+
+            const discount = parseFloat(discountInput ? discountInput.value : 0) || 0;
+            const net = Math.max(0, total - discount);
+
+            if (paidAmountInput) {
+                paidAmountInput.min = net.toFixed(2);
+                if (!userManuallyEditedPaid || !paidAmountInput.value || parseFloat(paidAmountInput.value) < net) {
+                    paidAmountInput.value = net.toFixed(2);
+                }
+            }
         }
 
-        updateTestsTotal();
+        updateTotals();
     </script>
 @endsection

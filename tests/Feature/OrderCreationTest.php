@@ -80,6 +80,8 @@ test('linked appointment status becomes completed when order is created', functi
         'patient_id' => $appointment->patient_id,
         'appointment_id' => $appointment->id,
         'test_ids' => [$test->id],
+        'paid_amount' => 100.00,
+        'payment_method' => 'cash',
     ]);
 
     $this->assertDatabaseHas('appointments', [
@@ -101,4 +103,34 @@ test('receptionist can update order status', function () {
         'id' => $order->id,
         'status' => 'in_progress',
     ]);
+});
+
+test('paid_amount is required when creating an order', function () {
+    $receptionist = User::factory()->create(['role' => 'receptionist']);
+    $patient = Patient::factory()->create();
+    $test = Test::factory()->create(['price' => 100.00]);
+
+    $response = $this->actingAs($receptionist)->post(route('reception.orders.store'), [
+        'patient_id' => $patient->id,
+        'test_ids' => [$test->id],
+        'payment_method' => 'cash',
+    ]);
+
+    $response->assertSessionHasErrors(['paid_amount']);
+});
+
+test('order creation fails if paid_amount is less than net total', function () {
+    $receptionist = User::factory()->create(['role' => 'receptionist']);
+    $patient = Patient::factory()->create();
+    $test = Test::factory()->create(['price' => 150.00]);
+
+    $response = $this->actingAs($receptionist)->post(route('reception.orders.store'), [
+        'patient_id' => $patient->id,
+        'test_ids' => [$test->id],
+        'discount' => 0.00,
+        'paid_amount' => 50.00,
+        'payment_method' => 'cash',
+    ]);
+
+    $response->assertSessionHasErrors(['paid_amount']);
 });

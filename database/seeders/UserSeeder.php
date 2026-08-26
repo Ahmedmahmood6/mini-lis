@@ -42,5 +42,45 @@ class UserSeeder extends Seeder
                 'phone' => '01200000003',
             ]
         );
+
+        User::updateOrCreate(
+            ['email' => 'mona.reception@minilis.com'],
+            [
+                'name' => 'Mona El-Sayed',
+                'password' => Hash::make('password'),
+                'role' => 'receptionist',
+                'phone' => '01145678901',
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'khaled.lab@minilis.com'],
+            [
+                'name' => 'Dr. Khaled Mahmoud',
+                'password' => Hash::make('password'),
+                'role' => 'technician',
+                'phone' => '01234567890',
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'noha.reception@minilis.com'],
+            [
+                'name' => 'Noha Hassan',
+                'password' => Hash::make('password'),
+                'role' => 'receptionist',
+                'phone' => '01012345678',
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'youssef.lab@minilis.com'],
+            [
+                'name' => 'Dr. Youssef Ali',
+                'password' => Hash::make('password'),
+                'role' => 'technician',
+                'phone' => '01598765432',
+            ]
+        );
     }
 }
