@@ -27,9 +27,18 @@
                         'cancelled' => 'bg-red-50 text-red-700',
                     ];
                 @endphp
-                <span class="inline-flex items-center gap-1.5 {{ $statusStyles[$order->status] ?? 'bg-slate-100 text-slate-600' }} text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full w-fit">
-                    {{ str_replace('_', ' ', $order->status) }}
-                </span>
+                                <div class="flex items-center gap-3 w-fit">
+                    <span class="inline-flex items-center gap-1.5 {{ $statusStyles[$order->status] ?? 'bg-slate-100 text-slate-600' }} text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full">
+                        {{ str_replace('_', ' ', $order->status) }}
+                    </span>
+                    <a href="{{ route('reception.orders.edit', $order) }}"
+                        class="inline-flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-xl transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                        </svg>
+                        Edit
+                    </a>
+                </div>
             </div>
         </div>
 

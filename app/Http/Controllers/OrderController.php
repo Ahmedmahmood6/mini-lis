@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Appointment;
 use App\Models\Invoice;
 use App\Models\Order;
@@ -196,5 +197,60 @@ class OrderController extends Controller
         return redirect()
             ->back()
             ->with('success', "Order {$order->order_number} status updated to '{$validated['status']}'.");
+    }
+
+    /**
+     * Show the form for editing the specified order's payment details.
+     */
+    public function edit(Order $order): View
+    {
+        $order->load(['patient', 'orderItems.test', 'invoice']);
+
+        $patients = Patient::latest()->limit(50)->get(['id', 'name', 'phone']);
+        if ($order->patient && ! $patients->contains('id', $order->patient->id)) {
+            $patients->push($order->patient);
+        }
+
+        return view('reception.orders.edit', compact('order', 'patients'));
+    }
+
+    /**
+     * Update the specified order's patient/notes and recalculate its invoice.
+     */
+    public function update(UpdateOrderRequest $request, Order $order): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        DB::transaction(function () use ($validated, $order) {
+            $order->update([
+                'patient_id' => $validated['patient_id'],
+                'notes' => $validated['notes'] ?? null,
+            ]);
+
+            $totalAmount = (float) $order->orderItems()->sum('price');
+            $discount = (float) ($validated['discount'] ?? 0.00);
+            $netAmount = max(0.00, $totalAmount - $discount);
+            $paidAmount = (float) ($validated['paid_amount'] ?? 0.00);
+
+            $paymentStatus = 'unpaid';
+            if ($paidAmount >= $netAmount && $netAmount > 0) {
+                $paymentStatus = 'paid';
+            } elseif ($paidAmount > 0) {
+                $paymentStatus = 'partially_paid';
+            }
+
+            $order->invoice()->update([
+                'total_amount' => $totalAmount,
+                'discount' => $discount,
+                'net_amount' => $netAmount,
+                'paid_amount' => $paidAmount,
+                'payment_status' => $paymentStatus,
+                'payment_method' => $validated['payment_method'],
+            ]);
+        });
+
+        return redirect()
+            ->route('reception.orders.show', $order)
+            ->with('success', "Order {$order->order_number} updated successfully.");
     }
 }
